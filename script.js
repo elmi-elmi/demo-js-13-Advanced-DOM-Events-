@@ -88,6 +88,34 @@ document.querySelector('.nav__links').addEventListener('mouseover', hoverHandle.
 document.querySelector('.nav__links').addEventListener('mouseout', hoverHandle.bind(1))
 // const h1 = document.querySelector('h1');
 
+
+const header = document.querySelector('.header');
+const stickyNav = function(entries){
+    const [entry] = entries
+    // entries.forEach((e,i)=> {
+    //     console.log(e)
+    //     console.log(i)
+    // })
+    console.log('entries',entry)
+    if(!entry.isIntersecting){
+        // console.log('inter')
+        document.querySelector('.nav').classList.add('sticky')
+    }else{
+        document.querySelector('.nav').classList.remove('sticky')
+    }
+}
+const navHeight = document.querySelector('.nav').getBoundingClientRect().height
+const headerObserver = new IntersectionObserver(stickyNav,{
+    root:null,
+    threshold:[0],
+    rootMargin:`-${navHeight}px`
+})
+
+headerObserver.observe(header)
+
+
+
+
 // console.log(h1.childNodes)
 // console.log(h1.children)
 // console.log(h1.parentElement)

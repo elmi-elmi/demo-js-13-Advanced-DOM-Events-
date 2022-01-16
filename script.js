@@ -141,7 +141,7 @@ sections.forEach(function (section) {
 const images = document.querySelectorAll('img[data-src]');
 
 const loadImage = function (entries, observer) {
-    console.log(entries)
+    // console.log(entries)
 
     entries.forEach(entry => {
         if (!entry.isIntersecting) return;
@@ -300,3 +300,17 @@ dotContainer.addEventListener('click', function (e){
 // console.log(logo.getAttribute('src'))
 // console.log(logo.dataset.versionNumber)
 
+document.addEventListener('DOMContentLoaded',function (e){
+    console.log('HTML parsed and DOM tree build')
+})
+
+window.addEventListener('load',function(e){
+    console.log('Page fully loaded', e)
+})
+
+
+window.addEventListener('beforeunload',function (e){
+    e.preventDefault()
+    console.log(e)
+    // e.returnValue = '';  // pop up a message when user want to exit
+})

@@ -114,12 +114,11 @@ const headerObserver = new IntersectionObserver(stickyNav, {
 headerObserver.observe(header)
 
 
-
 const sections = document.querySelectorAll('.section');
 
-const revealSection = function (entries, observer){
-    entries.forEach(entry=>{
-        if(!entry.isIntersecting) return;
+const revealSection = function (entries, observer) {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
 
         entry.target.classList.remove('section--hidden');
         observer.unobserve(entry.target)
@@ -127,40 +126,118 @@ const revealSection = function (entries, observer){
 
 
 }
-const sectionObserver = new IntersectionObserver(revealSection,{
-    root:null,
+const sectionObserver = new IntersectionObserver(revealSection, {
+    root: null,
     // threshold:[0, 0.1,.2,.3, 0.4 , .7 , .9, 1],
-    threshold:0.15
+    threshold: 0.15
     // rootMargin:`10px`
 })
 
-sections.forEach(function(section){
+sections.forEach(function (section) {
     sectionObserver.observe(section);
     section.classList.add('section--hidden')
 })
 
 const images = document.querySelectorAll('img[data-src]');
 
-const loadImage= function(entries,observer){
+const loadImage = function (entries, observer) {
     console.log(entries)
 
-    entries.forEach(entry=>{
-        if(!entry.isIntersecting) return;
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
         entry.target.src = entry.target.dataset.src
-        entry.target.addEventListener('load',function(){
+        entry.target.addEventListener('load', function () {
             entry.target.classList.remove('lazy-img')
             observer.unobserve(entry.target)
         })
     })
 
 }
-const imagerObserver = new IntersectionObserver(loadImage,{
-    root:null,
-    threshold:0,
-    rootMargin:'200px'
+const imagerObserver = new IntersectionObserver(loadImage, {
+    root: null,
+    threshold: 0,
+    rootMargin: '200px'
 })
 
-images.forEach(img=>imagerObserver.observe(img))
+images.forEach(img => imagerObserver.observe(img))
+
+
+const slides = document.querySelectorAll('.slide')
+const btnSliderLeft = document.querySelector('.slider__btn--left')
+const btnSliderRight = document.querySelector('.slider__btn--right')
+const dotContainer = document.querySelector('.dots')
+
+
+
+const goToSlide = function(slide){
+    slides.forEach((s, i) => {
+        s.style.transform = `translateX(${(i-slide) * 100}%)`
+    })
+}
+
+const activeDot = function(slide){
+    document.querySelectorAll('.dots__dot').forEach(dot=>{
+        dot.classList.remove('dots__dot--active')
+    })
+    document.querySelector(`.dots__dot[data-slide="${slide}"]`).classList.add('dots__dot--active')
+}
+
+
+const nextSlide = function(){
+    currSlide++;
+    if (currSlide === slideNumber) currSlide = 0;
+    slides.forEach((s, i) => {
+        s.style.transform = `translateX(${(i - currSlide) * 100}%)`
+    })
+}
+
+const preSlide = function (){
+    currSlide--;
+    if (currSlide === -1) currSlide = slideNumber - 1;
+    slides.forEach((s, i) => {
+        s.style.transform = `translateX(${(i - currSlide) * 100}%)`
+    })
+}
+
+const createDots = function(){
+    slides.forEach((_,i)=>{
+        document.querySelector('.dots').insertAdjacentHTML('beforeend',`<button class="dots__dot" data-slide="${i}"></button>`)
+    })
+}
+
+let currSlide = 0;
+const slideNumber = slides.length;
+
+goToSlide(0)
+createDots()
+activeDot(currSlide)
+
+
+btnSliderRight.addEventListener('click', function () {
+    nextSlide()
+    activeDot(currSlide)
+})
+
+btnSliderLeft.addEventListener('click', function () {
+   preSlide()
+    activeDot(currSlide)
+})
+
+
+
+// const dots = document.querySelector('.dots__dot')
+
+
+dotContainer.addEventListener('click', function (e){
+    if(e.target.classList.contains('dots__dot')){
+        const {slide} = e.target.dataset
+        goToSlide(slide)
+        activeDot(slide)
+    }
+})
+
+
+
 // console.log(h1.childNodes)
 // console.log(h1.children)
 // console.log(h1.parentElement)

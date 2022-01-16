@@ -74,12 +74,12 @@ document.querySelector('.operations__tab-container').addEventListener('click', f
 
 })
 
-const hoverHandle= function(e){
-    if(e.target.classList.contains('nav__link')){
+const hoverHandle = function (e) {
+    if (e.target.classList.contains('nav__link')) {
         const link = e.target;
         const siblings = link.closest('.nav').querySelectorAll('.nav__link');
         const logo = document.querySelector('.nav__logo');
-        siblings.forEach(s=>s.style.opacity = this)
+        siblings.forEach(s => s.style.opacity = this)
         link.style.opacity = 1;
         logo.style.opacity = this
     }
@@ -90,32 +90,77 @@ document.querySelector('.nav__links').addEventListener('mouseout', hoverHandle.b
 
 
 const header = document.querySelector('.header');
-const stickyNav = function(entries){
+const stickyNav = function (entries) {
     const [entry] = entries
     // entries.forEach((e,i)=> {
     //     console.log(e)
     //     console.log(i)
     // })
-    console.log('entries',entry)
-    if(!entry.isIntersecting){
+    // console.log('entries', entry)
+    if (!entry.isIntersecting) {
         // console.log('inter')
         document.querySelector('.nav').classList.add('sticky')
-    }else{
+    } else {
         document.querySelector('.nav').classList.remove('sticky')
     }
 }
 const navHeight = document.querySelector('.nav').getBoundingClientRect().height
-const headerObserver = new IntersectionObserver(stickyNav,{
-    root:null,
-    threshold:[0],
-    rootMargin:`-${navHeight}px`
+const headerObserver = new IntersectionObserver(stickyNav, {
+    root: null,
+    threshold: [0],
+    rootMargin: `-${navHeight}px`
 })
 
 headerObserver.observe(header)
 
 
 
+const sections = document.querySelectorAll('.section');
 
+const revealSection = function (entries, observer){
+    entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+
+        entry.target.classList.remove('section--hidden');
+        observer.unobserve(entry.target)
+    })
+
+
+}
+const sectionObserver = new IntersectionObserver(revealSection,{
+    root:null,
+    // threshold:[0, 0.1,.2,.3, 0.4 , .7 , .9, 1],
+    threshold:0.15
+    // rootMargin:`10px`
+})
+
+sections.forEach(function(section){
+    sectionObserver.observe(section);
+    section.classList.add('section--hidden')
+})
+
+const images = document.querySelectorAll('img[data-src]');
+
+const loadImage= function(entries,observer){
+    console.log(entries)
+
+    entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+        entry.target.src = entry.target.dataset.src
+        entry.target.addEventListener('load',function(){
+            entry.target.classList.remove('lazy-img')
+            observer.unobserve(entry.target)
+        })
+    })
+
+}
+const imagerObserver = new IntersectionObserver(loadImage,{
+    root:null,
+    threshold:0,
+    rootMargin:'200px'
+})
+
+images.forEach(img=>imagerObserver.observe(img))
 // console.log(h1.childNodes)
 // console.log(h1.children)
 // console.log(h1.parentElement)
